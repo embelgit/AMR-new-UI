@@ -59,6 +59,7 @@ import Users from "./pages/Users";
 import Layout from "./components/Layout";
 import Meters from "./pages/Meter";
 import Devices from "./pages/Device";
+import DeviceMeter from "./pages/DeviceMeter";
 import Alerts from "./pages/Alerts";
 import Reports from "./pages/Reports";
 import Billing from "./pages/Billing";
@@ -71,6 +72,8 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/devices-meters" element={<DeviceMeter />} />
+          {/* Keep old routes reachable if needed, but sidebar points to new one */}
           <Route path="/meters" element={<Meters />} />
           <Route path="/device" element={<Devices />} />
           <Route path="/alerts" element={<Alerts />} />

@@ -61,7 +61,7 @@
 // ];
 
 import {
- // HomeIcon,
+  // HomeIcon,
   ChartBarIcon,
   CpuChipIcon,
   UsersIcon,
@@ -86,14 +86,8 @@ export const sidebarItems = [
     roles: ["SUPER_ADMIN", "ADMIN"],
   },
   {
-    name: "Meters",
-    url: "/meters",
-    icon: BoltIcon, // ✅ different from Devices
-    roles: ["SUPER_ADMIN", "ADMIN"],
-  },
-  {
-    name: "Devices",
-    url: "/device",
+    name: "Devices & Meters",
+    url: "/devices-meters",
     icon: CpuChipIcon,
     roles: ["SUPER_ADMIN", "ADMIN"],
   },

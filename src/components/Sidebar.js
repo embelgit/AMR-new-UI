@@ -7,25 +7,20 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 
   return (
     <aside
-      className={`${
-        isCollapsed ? "w-20" : "w-72"
-      } h-[calc(100vh-64px)] bg-gradient-to-b from-blue-900 to-blue-700 text-white transition-all duration-300 flex flex-col shadow-xl`}
+      className={`${isCollapsed ? "w-20" : "w-72"
+        } h-[calc(100vh-64px)] bg-gradient-to-b from-blue-900 to-blue-700 text-white transition-all duration-300 flex flex-col shadow-xl`}
     >
       {/* Toggle Button Header */}
       <div className={`flex items-center ${isCollapsed ? "justify-center" : "justify-between"} px-4 py-4 border-b border-blue-800`}>
         {!isCollapsed && (
-          <span className="text-lg font-semibold text-white">Menu</span>
+          <span className="text-lg font-semibold text-white">Sidebar</span>
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="p-2.5 rounded-lg hover:bg-blue-800 transition-colors"
           title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {isCollapsed ? (
-            <Bars3Icon className="w-6 h-6 text-white" />
-          ) : (
-            <XMarkIcon className="w-6 h-6 text-white" />
-          )}
+          <Bars3Icon className="w-6 h-6 text-white" />
         </button>
       </div>
 
@@ -42,10 +37,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                 title={isCollapsed ? item.name : ""}
                 className={({ isActive }) =>
                   `flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-medium transition-all duration-200
-                  ${
-                    isActive
-                      ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/30"
-                      : "text-blue-100 hover:bg-blue-800 hover:text-white"
+                  ${isActive
+                    ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/30"
+                    : "text-blue-100 hover:bg-blue-800 hover:text-white"
                   }
                   ${isCollapsed ? "justify-center px-3" : ""}`
                 }

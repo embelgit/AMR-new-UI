@@ -183,57 +183,7 @@ const Reports = () => {
       </div>
 
       <div className="p-6 space-y-6">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <DocumentTextIcon className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-800">{dummyReports.length}</p>
-                <p className="text-sm text-slate-500">Total Reports</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-green-100 rounded-xl">
-                <ChartBarIcon className="w-6 h-6 text-green-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-800">
-                  {dummyReports.filter((r) => r.status === "Ready").length}
-                </p>
-                <p className="text-sm text-slate-500">Ready</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-amber-100 rounded-xl">
-                <CalendarIcon className="w-6 h-6 text-amber-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-800">
-                  {dummyReports.filter((r) => r.status === "Processing").length}
-                </p>
-                <p className="text-sm text-slate-500">Processing</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-purple-100 rounded-xl">
-                <ArrowDownTrayIcon className="w-6 h-6 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-800">24</p>
-                <p className="text-sm text-slate-500">Downloads</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        
 
         {/* Filters & Search */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
