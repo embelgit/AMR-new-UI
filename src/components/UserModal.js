@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../services/api";
 
 const UserModal = ({ onClose, editUser, refresh }) => {
   const role = localStorage.getItem("role");
@@ -18,13 +18,13 @@ const UserModal = ({ onClose, editUser, refresh }) => {
 
   const handleSubmit = async () => {
     if (editUser) {
-      await axios.put(
-        `http://localhost:8080/api/users/${editUser.id}`,
+      await api.put(
+        `/users/${editUser.id}`,
         form,
         { headers: { role } }
       );
     } else {
-      await axios.post("http://localhost:8080/api/users", form, {
+      await api.post("/users", form, {
         headers: { role }
       });
     }

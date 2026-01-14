@@ -9,7 +9,9 @@ import {
   BoltIcon,
   UsersIcon,
   ExclamationTriangleIcon,
+  Bars3Icon,
 } from "@heroicons/react/24/outline";
+import authService from "../services/authService";
 
 const alertCount = 4;
 
@@ -31,13 +33,42 @@ const dummyAlerts = [
   { id: 2, title: "Offline Device - MTR-003", type: "warning" },
 ];
 
-const TopNavbar = () => {
+const TopNavbar = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef(null);
+  const [user, setUser] = useState({
+    name: localStorage.getItem('name') || 'User',
+    email: localStorage.getItem('email') || 'Email',
+    role: localStorage.getItem('role') || 'Role',
+    username: localStorage.getItem('username') || 'username'
+  });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await authService.getProfile();
+        const fullName = data.name || (data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : (data.firstName || data.username || 'User'));
+        const newUserData = {
+          name: fullName,
+          email: data.email || 'Email',
+          role: data.role || 'Role',
+          username: data.username || 'username'
+        };
+        setUser(newUserData);
+        localStorage.setItem('name', newUserData.name);
+        localStorage.setItem('email', newUserData.email);
+        localStorage.setItem('role', newUserData.role);
+        localStorage.setItem('username', newUserData.username);
+      } catch (err) {
+        console.error("Failed to fetch profile", err);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -61,24 +92,24 @@ const TopNavbar = () => {
 
   const filteredMeters = search
     ? dummyMeters.filter(
-        (m) =>
-          m.meterNumber.toLowerCase().includes(search.toLowerCase()) ||
-          m.meterType.toLowerCase().includes(search.toLowerCase())
-      )
+      (m) =>
+        m.meterNumber.toLowerCase().includes(search.toLowerCase()) ||
+        m.meterType.toLowerCase().includes(search.toLowerCase())
+    )
     : [];
 
   const filteredUsers = search
     ? dummyUsers.filter(
-        (u) =>
-          u.name.toLowerCase().includes(search.toLowerCase()) ||
-          u.email.toLowerCase().includes(search.toLowerCase())
-      )
+      (u) =>
+        u.name.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase())
+    )
     : [];
 
   const filteredAlerts = search
     ? dummyAlerts.filter((a) =>
-        a.title.toLowerCase().includes(search.toLowerCase())
-      )
+      a.title.toLowerCase().includes(search.toLowerCase())
+    )
     : [];
 
   const hasResults =
@@ -87,15 +118,22 @@ const TopNavbar = () => {
     filteredAlerts.length > 0;
 
   return (
-    <header className="h-16 bg-white border-b flex items-center px-6 sticky top-0 z-40">
-      {/* LEFT: Logo */}
-      <div className="flex items-center">
-        <img src={logo} alt="Logo" className="h-9 w-auto" />
+    <header className="h-16 bg-white border-b flex items-center px-4 md:px-6 sticky top-0 z-40 gap-4">
+      {/* LEFT: Menu & Logo */}
+      <div className="flex items-center gap-3">
+        {/* Mobile Menu Button - Only visible on Mobile */}
+        <button
+          onClick={onMenuClick}
+          className="lg:hidden p-2 -ml-2 hover:bg-gray-100 rounded-lg transition"
+        >
+          <Bars3Icon className="w-6 h-6 text-gray-600" />
+        </button>
+        <img src={logo} alt="Logo" className="h-8 md:h-9 w-auto" />
       </div>
 
       {/* CENTER: Global Search */}
-      <div className="flex-1 flex justify-center px-8" ref={searchRef}>
-        <div className="relative w-full max-w-md">
+      <div className="flex-1 flex justify-center lg:px-8" ref={searchRef}>
+        <div className="relative w-full max-w-md hidden md:block">
           <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
@@ -105,7 +143,7 @@ const TopNavbar = () => {
               setShowResults(true);
             }}
             onFocus={() => search && setShowResults(true)}
-            placeholder="Search meters, users, alerts..."
+            placeholder="Search..."
             className="w-full pl-10 pr-10 py-2.5 bg-gray-100 border-0 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
           />
           {search && (
@@ -208,11 +246,10 @@ const TopNavbar = () => {
                           className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center gap-3"
                         >
                           <ExclamationTriangleIcon
-                            className={`w-5 h-5 ${
-                              alert.type === "critical"
-                                ? "text-red-500"
-                                : "text-amber-500"
-                            }`}
+                            className={`w-5 h-5 ${alert.type === "critical"
+                              ? "text-red-500"
+                              : "text-amber-500"
+                              }`}
                           />
                           <p className="text-sm font-medium text-gray-800">
                             {alert.title}
@@ -262,11 +299,11 @@ const TopNavbar = () => {
             className="flex items-center gap-3 hover:bg-gray-100 px-3 py-2 rounded-lg transition"
           >
             <div className="h-9 w-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
-              A
+              {user.name.charAt(0).toUpperCase()}
             </div>
             <div className="hidden sm:block text-left">
-              <p className="text-sm font-medium text-gray-800">Admin User</p>
-              <p className="text-xs text-gray-500">admin@example.com</p>
+              <p className="text-sm font-medium text-gray-800">{user.name}</p>
+              <p className="text-xs text-gray-500">{user.email}</p>
             </div>
             <ChevronDownIcon className="w-4 h-4 text-gray-500" />
           </button>
@@ -274,9 +311,9 @@ const TopNavbar = () => {
           {dropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-50">
               <div className="px-4 py-3 border-b">
-                <p className="text-sm font-medium text-gray-800">Admin User</p>
+                <p className="text-sm font-medium text-gray-800">{user.name}</p>
                 <p className="text-xs text-gray-500 truncate">
-                  admin@example.com
+                  {user.role}
                 </p>
               </div>
               <button

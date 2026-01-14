@@ -63,6 +63,7 @@ import DeviceMeter from "./pages/DeviceMeter";
 import Alerts from "./pages/Alerts";
 import Reports from "./pages/Reports";
 import Billing from "./pages/Billing";
+import ForgotPassword from "./pages/ForgotPassword";
 
 
 function App() {
@@ -82,6 +83,8 @@ function App() {
           <Route path="/billing" element={<Billing />} />
         </Route>
 
+
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/" element={<Login />} />
       </Routes>
     </BrowserRouter>

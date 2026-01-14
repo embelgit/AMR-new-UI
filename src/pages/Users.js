@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   PlusIcon,
   PencilIcon,
@@ -11,15 +12,15 @@ import {
 const PAGE_SIZE = 5;
 
 const Users = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([
-    { id: 1, name: "Admin User", email: "admin@test.com", role: "ADMIN", active: true, address: "123 Admin St, Mumbai" },
-    { id: 2, name: "Normal User", email: "user@test.com", role: "USER", active: true, address: "456 User Ln, Delhi" },
-    { id: 3, name: "Test User", email: "test@test.com", role: "USER", active: false, address: "789 Test Ave, Bangalore" },
-    { id: 4, name: "Demo User", email: "demo@test.com", role: "USER", active: true, address: "101 Demo Rd, Chennai" },
-    { id: 5, name: "Support User", email: "support@test.com", role: "ADMIN", active: true, address: "202 Support Blvd, Pune" },
-    { id: 6, name: "QA User", email: "qa@test.com", role: "USER", active: false, address: "303 QA Dr, Hyderabad" },
-    { id: 7, name: "QA User", email: "qa@test.com", role: "USER", active: false, address: "404 QA Way, Kolkata" },
-
+    { id: 1, name: "Admin User", email: "admin@test.com", username: "admin_user", role: "ADMIN", active: true, address: "123 Admin St, Mumbai" },
+    { id: 2, name: "Normal User", email: "user@test.com", username: "john_doe", role: "USER", active: true, address: "456 User Ln, Delhi" },
+    { id: 3, name: "Test User", email: "test@test.com", username: "alice", role: "USER", active: false, address: "789 Test Ave, Bangalore" },
+    { id: 4, name: "Demo User", email: "demo@test.com", username: "bob", role: "USER", active: true, address: "101 Demo Rd, Chennai" },
+    { id: 5, name: "Support User", email: "support@test.com", username: "superadmin", role: "ADMIN", active: true, address: "202 Support Blvd, Pune" },
+    { id: 6, name: "QA User", email: "qa@test.com", username: "qa_user", role: "USER", active: false, address: "303 QA Dr, Hyderabad" },
+    { id: 7, name: "QA User 2", email: "qa2@test.com", username: "qa_user2", role: "USER", active: false, address: "404 QA Way, Kolkata" },
   ]);
 
   const [search, setSearch] = useState("");
@@ -103,9 +104,9 @@ const Users = () => {
 
   /* ---------------- UI ---------------- */
   return (
-    <div className="p-6 relative flex gap-4 h-[calc(100vh-80px)]">
+    <div className="p-4 md:p-6 relative flex flex-col lg:flex-row gap-4 h-[calc(100vh-80px)] overflow-hidden">
       {/* USERS CARD */}
-      <div className={`bg-white rounded-lg shadow p-5 space-y-5 flex-1 flex flex-col transition-all duration-300 ${detailsUser ? "w-2/3" : "w-full"}`}>
+      <div className={`bg-white rounded-lg shadow p-4 md:p-5 space-y-5 flex-1 flex flex-col transition-all duration-300 ${detailsUser ? "lg:w-2/3 w-full hidden lg:flex" : "w-full"}`}>
         {/* HEADER */}
         <div className="flex justify-between items-center">
           <h1 className="text-lg font-semibold text-gray-800">Users</h1>
@@ -115,12 +116,12 @@ const Users = () => {
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm"
           >
             <PlusIcon className="w-5 h-5" />
-            Create User
+            <span className="hidden sm:inline">Create User</span>
           </button>
         </div>
 
         {/* SEARCH */}
-        <div className="relative w-72">
+        <div className="relative w-full max-w-xs">
           <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
           <input
             value={search}
@@ -134,9 +135,9 @@ const Users = () => {
         </div>
 
         {/* TABLE */}
-        <div className="overflow-hidden rounded-md border">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-600">
+        <div className="overflow-x-auto rounded-md border flex-1">
+          <table className="w-full text-sm min-w-[600px]">
+            <thead className="bg-gray-50 text-gray-600 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left">Name</th>
                 <th className="px-4 py-3 text-left">Email</th>
@@ -168,12 +169,15 @@ const Users = () => {
                     </span>
                   </td>
 
-                  <td className="px-4 py-3 text-gray-600">{user.address || "-"}</td>
+                  <td className="px-4 py-3 text-gray-600 max-w-[150px] truncate">{user.address || "-"}</td>
 
                   {/* ACTIVE / INACTIVE */}
                   <td className="px-4 py-3">
                     <button
-                      onClick={() => toggleActive(user.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleActive(user.id);
+                      }}
                       className={`px-3 py-1 rounded-full text-xs font-medium ${user.active
                         ? "bg-green-100 text-green-700"
                         : "bg-gray-200 text-gray-600"
@@ -184,10 +188,10 @@ const Users = () => {
                   </td>
 
                   <td className="px-4 py-3 flex justify-end gap-3">
-                    <button onClick={() => openEdit(user)}>
+                    <button onClick={(e) => { e.stopPropagation(); openEdit(user); }}>
                       <PencilIcon className="w-4 h-4 text-blue-600" />
                     </button>
-                    <button onClick={() => deleteUser(user.id)}>
+                    <button onClick={(e) => { e.stopPropagation(); deleteUser(user.id); }}>
                       <TrashIcon className="w-4 h-4 text-red-600" />
                     </button>
                   </td>
@@ -196,7 +200,7 @@ const Users = () => {
 
               {paginatedUsers.length === 0 && (
                 <tr>
-                  <td colSpan="5" className="px-4 py-6 text-center text-gray-500">
+                  <td colSpan="6" className="px-4 py-6 text-center text-gray-500">
                     No users found
                   </td>
                 </tr>
@@ -206,7 +210,7 @@ const Users = () => {
         </div>
 
         {/* PAGINATION */}
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2 pt-2">
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
@@ -231,7 +235,7 @@ const Users = () => {
 
       {/* RIGHT CONTENT - DETAILS PANEL */}
       {detailsUser && (
-        <div className="w-[450px] bg-white text-sm shadow-2xl border-l border-gray-200 flex flex-col transition-all duration-300 animate-slide-in z-20 h-full">
+        <div className="w-full lg:w-[450px] bg-white text-sm shadow-2xl border-l border-gray-200 flex flex-col transition-all duration-300 animate-slide-in z-20 h-full fixed inset-0 lg:static lg:inset-auto">
           {/* BLUE HEADER */}
           <div className="bg-blue-600 text-white p-4 flex justify-between items-start shrink-0">
             <div>
@@ -242,7 +246,7 @@ const Users = () => {
               onClick={() => setDetailsUser(null)}
               className="p-1 hover:bg-white/10 rounded-full transition-colors"
             >
-              <XMarkIcon className="w-6 h-6 text-white" />
+              <XMarkIcon className="w-6 h-6 text-black" />
             </button>
           </div>
 

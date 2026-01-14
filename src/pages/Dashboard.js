@@ -226,7 +226,7 @@ const Dashboard = () => {
               View All <ChevronRightIcon className="w-4 h-4" />
             </button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {meterTypes.map((type) => (
               <div
                 key={type}
@@ -340,7 +340,7 @@ const Dashboard = () => {
                 View All <ChevronRightIcon className="w-4 h-4" />
               </button>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
               {/* Admin Card */}
               <div
                 onClick={() => setSelectedUserRole(selectedUserRole === "ADMIN" ? null : "ADMIN")}
@@ -512,7 +512,11 @@ const Dashboard = () => {
                                         <p className="text-[10px] uppercase font-bold text-slate-400 mb-2 pl-1">Assigned Meters</p>
                                         <div className="space-y-2">
                                           {dummyMeters.filter(m => m.assignedToUsername === cu.username).map(meter => (
-                                            <div key={meter.id} className="flex items-center gap-3 bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition cursor-default">
+                                            <div
+                                              key={meter.id}
+                                              onClick={() => setSelectedMeter(meter)}
+                                              className="flex items-center gap-3 bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md hover:bg-blue-50/50 transition cursor-pointer"
+                                            >
                                               <div className="p-1.5 bg-blue-50 rounded-md text-blue-500">
                                                 {getMeterIcon(meter.meterType)}
                                               </div>

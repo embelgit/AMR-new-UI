@@ -7,18 +7,13 @@ import {
   LinkSlashIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
-  ClipboardDocumentListIcon,
-  BellIcon,
-  CpuChipIcon,
-  ListBulletIcon,
-  ShareIcon,
   ClockIcon,
-  DocumentTextIcon,
   ClipboardIcon,
-  ArchiveBoxIcon,
-  SignalIcon,
-  KeyIcon
+  ArrowsPointingOutIcon,
+  ViewColumnsIcon
+
 } from "@heroicons/react/24/outline";
+import DataExport from "../components/DataExport";
 
 const PAGE_SIZE = 5;
 const DEVICE_TYPES = ["4G", "WIFI", "ETHERNET"];
@@ -191,25 +186,42 @@ const Devices = () => {
 
   /* ---------------- UI ---------------- */
   return (
-    <div className="relative flex gap-4 h-[calc(100vh-140px)]">
+    <div className="relative flex flex-col lg:flex-row gap-4 h-[calc(100vh-140px)] overflow-hidden">
       {/* LEFT CONTENT - TABLE */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${detailsDevice ? "w-2/3" : "w-full"}`}>
-        <div className="bg-white rounded-lg shadow p-5 space-y-5 h-full flex flex-col">
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${detailsDevice ? "lg:w-2/3 w-full hidden lg:flex" : "w-full"}`}>
+        <div className="bg-white rounded-lg shadow p-4 md:p-5 space-y-5 h-full flex flex-col">
           {/* HEADER */}
-          <div className="flex justify-between items-center">
-            <h1 className="text-lg font-semibold">Devices</h1>
+          <div className="flex justify-between items-center bg-gray-50/80 -mx-4 -mt-4 p-4 mb-4 border-b rounded-t-lg shadow-sm">
+            <h1 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <ClipboardIcon className="w-6 h-6 text-blue-600" />
+              Devices
+            </h1>
 
-            <button
-              onClick={openCreate}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm"
-            >
-              <PlusIcon className="w-5 h-5" />
-              Add Device
-            </button>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 p-1 bg-white rounded-lg border border-slate-200 shadow-sm mr-2 flex">
+                <button className="p-1.5 text-slate-500 hover:bg-slate-50 rounded transition-colors" title="View Columns">
+                  <ViewColumnsIcon className="w-5 h-5" />
+                </button>
+
+                <DataExport data={filteredDevices} filename="devices_export" sheetName="Devices" />
+
+                <button className="p-1.5 text-slate-500 hover:bg-slate-50 rounded transition-colors" title="Toggle Fullscreen">
+                  <ArrowsPointingOutIcon className="w-5 h-5" />
+                </button>
+              </div>
+
+              <button
+                onClick={openCreate}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition-all active:scale-95"
+              >
+                <PlusIcon className="w-5 h-5" />
+                <span className="hidden sm:inline">Add Device</span>
+              </button>
+            </div>
           </div>
 
           {/* SEARCH */}
-          <div className="relative w-72">
+          <div className="relative w-full max-w-xs">
             <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
             <input
               value={search}
@@ -218,13 +230,13 @@ const Devices = () => {
                 setPage(1);
               }}
               placeholder="Search devices..."
-              className="pl-10 pr-3 py-2 w-full border rounded-md text-sm"
+              className="pl-10 pr-3 py-2 w-full border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50/30"
             />
           </div>
 
           {/* TABLE */}
-          <div className="overflow-auto flex-1 rounded-md border text-sm">
-            <table className="w-full relative">
+          <div className="overflow-x-auto flex-1 rounded-md border text-sm">
+            <table className="w-full relative min-w-[700px]">
               <thead className="bg-gray-50 sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-3 text-left">Device</th>
@@ -250,14 +262,25 @@ const Devices = () => {
                     <td className="px-4 py-3">{d.deviceType}</td>
 
                     <td className="px-4 py-3">
-                      <span
-                        className={`px-2 py-1 rounded text-xs ${d.isLinked
+                      <select
+                        value={d.isLinked ? "true" : "false"}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => {
+                          const isLinked = e.target.value === "true";
+                          if (isLinked) {
+                            openLinkModal(e, d);
+                          } else {
+                            unlinkMeter(e, d.id);
+                          }
+                        }}
+                        className={`px-2 py-1 rounded text-xs border-0 cursor-pointer focus:ring-2 focus:ring-blue-500 ${d.isLinked
                           ? "bg-green-100 text-green-700"
                           : "bg-gray-200 text-gray-600"
                           }`}
                       >
-                        {d.isLinked ? "Linked" : "Not Linked"}
-                      </span>
+                        <option value="true">Linked</option>
+                        <option value="false">Not Linked</option>
+                      </select>
                     </td>
 
                     <td className="px-4 py-3">{d.linkedMeterId || "-"}</td>
@@ -314,7 +337,9 @@ const Devices = () => {
 
       {/* RIGHT CONTENT - DETAILS PANEL */}
       {detailsDevice && (
-        <div className="w-[450px] bg-white text-sm shadow-2xl border-l border-gray-200 flex flex-col transition-all duration-300 animate-slide-in z-20">
+        <div className="w-full lg:w-[450px] bg-white text-sm shadow-2xl border-l border-gray-200 flex flex-col transition-all duration-300 animate-slide-in z-20 fixed inset-0 lg:static lg:inset-auto h-full">
+          {/* BLUE HEADER */}
+          {/* BLUE HEADER */}
           {/* BLUE HEADER */}
           <div className="bg-blue-600 text-white p-4 flex justify-between items-start shrink-0">
             <div>
@@ -323,9 +348,9 @@ const Devices = () => {
             </div>
             <button
               onClick={() => setDetailsDevice(null)}
-              className="p-1 hover:bg-white/10 rounded-full transition-colors"
+              className="bg-white text-blue-600 p-1.5 rounded-full shadow-md hover:bg-blue-50 transition-colors z-50 mr-2"
             >
-              <XMarkIcon className="w-6 h-6 text-white" />
+              <XMarkIcon className="w-5 h-5" />
             </button>
           </div>
 

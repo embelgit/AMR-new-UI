@@ -152,7 +152,7 @@ const Reports = () => {
   const handleDownload = (report, e) => {
     if (e) e.stopPropagation();
     if (report.status !== "Ready") return;
-    
+
     setToastMessage(`Downloading "${report.name}"...`);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
@@ -182,28 +182,27 @@ const Reports = () => {
         </div>
       </div>
 
-      <div className="p-6 space-y-6">
-        
+      <div className="px-4 py-6 md:p-6 space-y-6">
+
 
         {/* Filters & Search */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
           <div className="flex flex-col sm:flex-row gap-4 justify-between">
             <div className="flex flex-wrap gap-3">
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <MagnifyingGlassIcon className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search reports..."
-                  className="pl-10 pr-4 py-2.5 bg-slate-100 border-0 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all w-64"
+                  className="pl-10 pr-4 py-2.5 bg-slate-100 border-0 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all w-full sm:w-64"
                 />
               </div>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
-                  showFilters ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${showFilters ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
               >
                 <FunnelIcon className="w-5 h-5" />
                 Filters
@@ -212,17 +211,15 @@ const Reports = () => {
             <div className="flex items-center gap-2 bg-slate-100 rounded-xl p-1">
               <button
                 onClick={() => setViewMode("table")}
-                className={`p-2 rounded-lg transition ${
-                  viewMode === "table" ? "bg-white shadow-sm" : "hover:bg-slate-200"
-                }`}
+                className={`p-2 rounded-lg transition ${viewMode === "table" ? "bg-white shadow-sm" : "hover:bg-slate-200"
+                  }`}
               >
                 <TableCellsIcon className="w-5 h-5 text-slate-600" />
               </button>
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-lg transition ${
-                  viewMode === "grid" ? "bg-white shadow-sm" : "hover:bg-slate-200"
-                }`}
+                className={`p-2 rounded-lg transition ${viewMode === "grid" ? "bg-white shadow-sm" : "hover:bg-slate-200"
+                  }`}
               >
                 <ChartBarIcon className="w-5 h-5 text-slate-600" />
               </button>
@@ -278,8 +275,8 @@ const Reports = () => {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredReports.map((report) => (
-                    <tr 
-                      key={report.id} 
+                    <tr
+                      key={report.id}
                       className="hover:bg-slate-50 transition cursor-pointer"
                       onClick={() => setSelectedReport(report)}
                     >
@@ -335,8 +332,8 @@ const Reports = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-5">
               {filteredReports.map((report) => (
-                <div 
-                  key={report.id} 
+                <div
+                  key={report.id}
                   className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition cursor-pointer"
                   onClick={() => setSelectedReport(report)}
                 >
@@ -436,7 +433,7 @@ const Reports = () => {
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="bg-slate-50 rounded-xl p-4 text-center">
                     <p className="text-2xl font-bold text-slate-800">{selectedReport.totalMeters}</p>
                     <p className="text-sm text-slate-500">Total Meters</p>

@@ -248,7 +248,7 @@ const Billing = () => {
         </div>
       </div>
 
-      <div className="p-6 space-y-6">
+      <div className="px-4 py-6 md:p-6 space-y-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white">
@@ -304,21 +304,20 @@ const Billing = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
           <div className="flex flex-col sm:flex-row gap-4 justify-between">
             <div className="flex flex-wrap gap-3">
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <MagnifyingGlassIcon className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search invoices..."
-                  className="pl-10 pr-4 py-2.5 bg-slate-100 border-0 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all w-64"
+                  className="pl-10 pr-4 py-2.5 bg-slate-100 border-0 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all w-full sm:w-64"
                 />
               </div>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
-                  showFilters ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${showFilters ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
               >
                 <FunnelIcon className="w-5 h-5" />
                 Filters
@@ -338,11 +337,10 @@ const Billing = () => {
                     <button
                       key={status}
                       onClick={() => setStatusFilter(status)}
-                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                        statusFilter === status
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${statusFilter === status
                           ? "bg-blue-600 text-white"
                           : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                      }`}
+                        }`}
                     >
                       {status}
                     </button>
@@ -370,8 +368,8 @@ const Billing = () => {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredInvoices.map((invoice) => (
-                  <tr 
-                    key={invoice.id} 
+                  <tr
+                    key={invoice.id}
                     className="hover:bg-slate-50 transition cursor-pointer"
                     onClick={() => setSelectedInvoice(invoice)}
                   >
@@ -416,29 +414,29 @@ const Billing = () => {
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex items-center justify-end gap-2">
-                        <button 
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedInvoice(invoice);
                           }}
-                          className="p-2 hover:bg-blue-100 rounded-lg transition" 
+                          className="p-2 hover:bg-blue-100 rounded-lg transition"
                           title="View"
                         >
                           <EyeIcon className="w-4 h-4 text-blue-600" />
                         </button>
-                        <button 
+                        <button
                           onClick={(e) => handleDownload(invoice, e)}
-                          className="p-2 hover:bg-green-100 rounded-lg transition" 
+                          className="p-2 hover:bg-green-100 rounded-lg transition"
                           title="Download"
                         >
                           <ArrowDownTrayIcon className="w-4 h-4 text-green-600" />
                         </button>
-                        <button 
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleEmail(invoice);
                           }}
-                          className="p-2 hover:bg-purple-100 rounded-lg transition" 
+                          className="p-2 hover:bg-purple-100 rounded-lg transition"
                           title="Send Email"
                         >
                           <EnvelopeIcon className="w-4 h-4 text-purple-600" />

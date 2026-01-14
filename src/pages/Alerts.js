@@ -137,7 +137,7 @@ const Alerts = () => {
   const unreadCount = alerts.filter((a) => !a.isRead).length;
 
   return (
-    <div className="p-6">
+    <div className="px-4 py-6 md:p-6">
       <div className="bg-white rounded-lg shadow p-5 space-y-5">
         {/* HEADER */}
         <div className="flex justify-between items-center">
@@ -160,7 +160,7 @@ const Alerts = () => {
 
         {/* FILTERS */}
         <div className="flex flex-wrap gap-4">
-          <div className="relative w-72">
+          <div className="relative w-full sm:w-72">
             <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
             <input
               value={search}
