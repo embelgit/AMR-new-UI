@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { sidebarItems } from "../config/sidebarItems";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useEffect } from "react";
+import logoFull from "../assets/embel-logo-full.png";
 
 const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, isOpen, setIsOpen }) => {
   const role = localStorage.getItem("role");
@@ -11,45 +12,39 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, isOpen, setIsOpen }) =
     if (isMobile && isOpen) {
       setIsOpen(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [window.location.pathname]);
 
   const sidebarClasses = isMobile
-    ? `fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-900 to-blue-700 text-white transition-transform duration-300 shadow-2xl ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      }`
-    : `${
-        isCollapsed ? "w-20" : "w-72"
-      } h-[calc(100vh-64px)] bg-gradient-to-b from-blue-900 to-blue-700 text-white transition-all duration-300 flex flex-col shadow-xl`;
+    ? `fixed inset-y-0 left-0 z-50 w-56 bg-white text-slate-600 transition-transform duration-300 shadow-[20px_0_40px_rgba(0,0,0,0.1)] ${isOpen ? "translate-x-0" : "-translate-x-full"}`
+    : `${isCollapsed ? "w-14" : "w-56"} bg-white text-slate-600 transition-all duration-300 flex flex-col shadow-[8px_0_30px_-10px_rgba(0,0,0,0.1)] border-r border-slate-100 z-20`;
 
   return (
     <>
       {/* Mobile Overlay */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+          className="fixed inset-0 bg-black/20 z-40 backdrop-blur-[2px]"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       <aside className={sidebarClasses}>
-        {/* Toggle Button Header */}
         <div
-          className={`flex items-center ${
-            isCollapsed && !isMobile ? "justify-center" : "justify-between"
-          } px-4 py-4 border-b border-blue-800`}
+          className={`flex items-center ${isCollapsed && !isMobile ? "justify-center" : "justify-between"
+            } px-4 h-16 bg-white`}
         >
-          {(!isCollapsed || isMobile) && (
-            <span className="text-lg font-semibold text-white">Sidebar</span>
-          )}
-          
-          {/* Desktop Collapse Button */}
-          {!isMobile && (
+          {(!isCollapsed || isMobile) ? (
+            <div className="flex items-center overflow-hidden">
+              <img src={logoFull} alt="AMR Logo" className="h-8 w-auto object-contain" />
+            </div>
+          ) : (
+            /* Toggle Button when collapsed - Centered in header */
             <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2.5 rounded-lg hover:bg-blue-800 transition-colors"
-              title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              onClick={() => setIsCollapsed(false)}
+              className="p-2 rounded-lg hover:bg-slate-50 text-slate-400 hover:text-blue-500 transition-all"
             >
-              <Bars3Icon className="w-6 h-6 text-white" />
+              <Bars3Icon className="w-5 h-5" />
             </button>
           )}
 
@@ -57,36 +52,85 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, isOpen, setIsOpen }) =
           {isMobile && (
             <button
               onClick={() => setIsOpen(false)}
-              className="p-2.5 rounded-lg hover:bg-blue-800 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
             >
-              <XMarkIcon className="w-6 h-6 text-white" />
+              <XMarkIcon className="w-5 h-5 text-slate-400" />
+            </button>
+          )}
+
+          {/* Desktop Sidebar Toggle (Hamburger) - Expanded State */}
+          {!isMobile && !isCollapsed && (
+            <button
+              onClick={() => setIsCollapsed(true)}
+              className="p-1.5 rounded-lg hover:bg-slate-50 text-slate-300 hover:text-blue-500 transition-all group"
+            >
+              <Bars3Icon className="w-5 h-5 group-hover:scale-110" />
             </button>
           )}
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 flex flex-col gap-2 overflow-y-auto">
+        <nav className="flex-1 px-3 py-4 flex flex-col gap-1 overflow-y-auto">
+
+
           {sidebarItems
-            .filter((item) => item.roles.includes(role))
+            .filter((item) => {
+              if (!item.roles.includes(role)) return false;
+              if (role === 'ADMIN') {
+                const assignedMeters = JSON.parse(localStorage.getItem('assignedMeters') || '[]');
+                // If the item is Water, Gas, or Energy, check if it's assigned
+                if (item.name === 'Water' && !assignedMeters.includes('WATER')) return false;
+                if (item.name === 'Gas' && !assignedMeters.includes('GAS')) return false;
+                if (item.name === 'Energy' && !assignedMeters.includes('ELECTRIC')) return false;
+              }
+              return true;
+            })
             .map((item) => {
               const Icon = item.icon;
+
+              // Dynamic labels/urls for Role specific view
+              let displayName = item.name;
+              let targetUrl = item.url;
+              if (role === 'USER' && item.name === 'Dashboard') {
+                displayName = 'Solar';
+                targetUrl = '/solar-dashboard';
+              }
+
+              // Add badges to specific items
+              const showBadge = item.name === "Device" || item.name === "Alerts/Alarms";
+              const badgeCount = item.name === "Device" ? 3 : item.name === "Alerts/Alarms" ? 1 : 0; // Mock counts
+
               return (
                 <NavLink
                   key={item.name}
-                  to={item.url}
-                  title={isCollapsed && !isMobile ? item.name : ""}
+                  to={targetUrl}
+                  title={isCollapsed && !isMobile ? displayName : ""}
                   className={({ isActive }) =>
-                    `flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-medium transition-all duration-200
-                  ${
-                    isActive
-                      ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/30"
-                      : "text-blue-100 hover:bg-blue-800 hover:text-white"
-                  }
-                  ${isCollapsed && !isMobile ? "justify-center px-3" : ""}`
+                    `relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-300 group
+                    ${isActive
+                      ? "bg-blue-600 text-white shadow-[0_10px_15px_-3px_rgba(37,99,235,0.3)]"
+                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                    }
+                    ${isCollapsed && !isMobile ? "justify-center px-0 w-10 h-10 mx-auto" : ""}`
                   }
                 >
-                  <Icon className="h-6 w-6 flex-shrink-0" />
-                  {(!isCollapsed || isMobile) && <span>{item.name}</span>}
+                  {({ isActive }) => (
+                    <>
+                      <Icon className={`h-5 w-5 flex-shrink-0 transition-transform ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
+                      {(!isCollapsed || isMobile) && (
+                        <span className="flex-1 truncate">{displayName}</span>
+                      )}
+
+                      {/* Badge */}
+                      {(!isCollapsed || isMobile) && showBadge && (
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm transition-colors
+                            ${isActive ? 'bg-white text-blue-600' : 'bg-orange-500 text-white'}
+                          `}>
+                          {badgeCount}
+                        </span>
+                      )}
+                    </>
+                  )}
                 </NavLink>
               );
             })}
@@ -94,9 +138,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, isOpen, setIsOpen }) =
 
         {/* Footer */}
         {(!isCollapsed || isMobile) && (
-          <div className="px-4 py-4 border-t border-blue-800">
-            <p className="text-xs text-blue-300 text-center">
-              AMR Dashboard v1.0
+          <div className="px-4 py-4 border-t border-slate-50 text-center">
+            <p className="text-[10px] uppercase tracking-wider font-bold text-slate-300">
+              &copy; 2026 Embel Tech
             </p>
           </div>
         )}

@@ -248,7 +248,7 @@ const Billing = () => {
         </div>
       </div>
 
-      <div className="px-4 py-6 md:p-6 space-y-6">
+      <div className="space-y-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white">
@@ -338,8 +338,8 @@ const Billing = () => {
                       key={status}
                       onClick={() => setStatusFilter(status)}
                       className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${statusFilter === status
-                          ? "bg-blue-600 text-white"
-                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        ? "bg-blue-600 text-white"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                         }`}
                     >
                       {status}

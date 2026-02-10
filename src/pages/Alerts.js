@@ -137,7 +137,7 @@ const Alerts = () => {
   const unreadCount = alerts.filter((a) => !a.isRead).length;
 
   return (
-    <div className="px-4 py-6 md:p-6">
+    <div className="">
       <div className="bg-white rounded-lg shadow p-5 space-y-5">
         {/* HEADER */}
         <div className="flex justify-between items-center">

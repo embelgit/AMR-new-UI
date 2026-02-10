@@ -7,6 +7,7 @@ const Layout = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [selectedMeterType, setSelectedMeterType] = useState(null);
 
   // Handle Resize for Mobile/Desktop check
   useEffect(() => {
@@ -25,24 +26,29 @@ const Layout = () => {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      {/* FULL WIDTH NAVBAR */}
-      <TopNavbar onMenuClick={() => setIsSidebarOpen(true)} isMobile={isMobile} />
+    <div className="flex h-screen overflow-hidden bg-gray-50">
+      {/* SIDEBAR (Left) */}
+      <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
+        isMobile={isMobile}
+        isOpen={isSidebarOpen}
+        setIsOpen={setIsSidebarOpen}
+      />
 
-      {/* BELOW NAVBAR */}
-      <div className="flex flex-1 overflow-hidden relative">
-        {/* SIDEBAR */}
-        <Sidebar
-          isCollapsed={isSidebarCollapsed}
-          setIsCollapsed={setIsSidebarCollapsed}
+      {/* CONTENT AREA (Right) */}
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+        {/* TOP NAVBAR */}
+        <TopNavbar
+          onMenuClick={() => setIsSidebarOpen(true)}
           isMobile={isMobile}
-          isOpen={isSidebarOpen}
-          setIsOpen={setIsSidebarOpen}
+          selectedMeterType={selectedMeterType}
+          setSelectedMeterType={setSelectedMeterType}
         />
 
-        {/* PAGE CONTENT */}
-        <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-auto">
-          <Outlet />
+        {/* MAIN PAGE CONTENT */}
+        <main className="flex-1 overflow-y-auto scroll-smooth">
+          <Outlet context={{ selectedMeterType, setSelectedMeterType }} />
         </main>
       </div>
     </div>

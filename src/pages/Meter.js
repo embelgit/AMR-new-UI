@@ -101,10 +101,18 @@ const Meters = () => {
     /* ---------------- FILTER + PAGINATION ---------------- */
     const filteredMeters = useMemo(() => {
         return meters.filter(
-            (m) =>
-                m.meterNumber.toLowerCase().includes(search.toLowerCase()) ||
-                m.assignedToUsername.toLowerCase().includes(search.toLowerCase()) ||
-                m.siteName.toLowerCase().includes(search.toLowerCase())
+            (m) => {
+                const currentRole = localStorage.getItem('role');
+                const assignedMeters = JSON.parse(localStorage.getItem('assignedMeters') || '[]');
+
+                if (currentRole === 'ADMIN') {
+                    if (!assignedMeters.includes(m.meterType)) return false;
+                }
+
+                return m.meterNumber.toLowerCase().includes(search.toLowerCase()) ||
+                    m.assignedToUsername.toLowerCase().includes(search.toLowerCase()) ||
+                    m.siteName.toLowerCase().includes(search.toLowerCase());
+            }
         );
     }, [meters, search]);
 

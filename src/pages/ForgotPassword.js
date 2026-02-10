@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
-import { ArrowLeftIcon, EnvelopeIcon, KeyIcon, ShieldCheckIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, EyeIcon, EyeSlashIcon, EnvelopeIcon, ShieldCheckIcon, KeyIcon } from "@heroicons/react/24/solid";
+
+import bgImage from "../assets/login-animated-bg.png";
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
@@ -10,14 +12,29 @@ const ForgotPassword = () => {
     const [otp, setOtp] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            const { clientX, clientY } = e;
+            const x = (clientX / window.innerWidth - 0.5) * 40;
+            const y = (clientY / window.innerHeight - 0.5) * 40;
+            setMousePos({ x, y });
+        };
+
+        window.addEventListener("mousemove", handleMouseMove);
+        return () => window.removeEventListener("mousemove", handleMouseMove);
+    }, []);
 
     const handleSendOTP = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
+        setMessage('');
         try {
             await authService.forgotPassword(email);
             setMessage('OTP sent to your email successfully.');
@@ -49,143 +66,125 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div
-            className="relative flex items-center justify-center w-full h-screen bg-center bg-cover"
-            style={{ backgroundImage: `url(/assets/login_bg.jpg)` }}
-        >
-            <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
+        <div className="relative flex items-center justify-center min-h-screen bg-[#a3c8f8] overflow-hidden">
+            {/* Interactive Background Layer */}
+            <div
+                className="absolute inset-0 z-0 opacity-15 pointer-events-none transition-transform duration-500 ease-out"
+                style={{
+                    backgroundImage: `url(${bgImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    transform: `translate(${mousePos.x}px, ${mousePos.y}px) scale(1.1)`,
+                    filter: 'brightness(0.9) contrast(1.1)'
+                }}
+            ></div>
 
-            <div className="relative w-full max-w-md mx-4 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/20">
+            {/* Auth Card */}
+            <div className="relative z-10 w-full max-w-[380px] bg-white rounded-lg shadow-[0_15px_50px_rgba(0,0,0,0.1)] p-8 flex flex-col items-center">
                 <button
                     onClick={() => navigate('/')}
-                    className="absolute top-6 left-6 text-gray-500 hover:text-blue-600 transition-colors flex items-center gap-1 text-sm font-medium"
+                    className="absolute top-4 left-4 text-[#0b63d1] hover:underline transition-all flex items-center gap-1 text-[0.85rem] font-bold"
                 >
-                    <ArrowLeftIcon className="w-4 h-4" />
+                    <ArrowLeftIcon className="w-3.5 h-3.5" />
                     Back to Login
                 </button>
 
-                <div className="text-center mt-6 mb-8">
-                    <h2 className="text-2xl font-bold text-gray-800">
-                        {step === 1 ? 'Forgot Password?' : 'Reset Your Password'}
+                <div className="text-center mt-8 mb-8">
+                    <h2 className="text-[#0b63d1] text-2xl font-bold">
+                        {step === 1 ? 'Forgot Password?' : 'Reset Password'}
                     </h2>
-                    <p className="text-gray-500 text-sm mt-2">
+                    <p className="text-[#0b63d1] font-bold text-[0.8rem] mt-2 tracking-tight">
                         {step === 1
-                            ? "Enter your email address and we'll send you an OTP to reset your password."
-                            : "Enter the OTP sent to your email and your new password."}
+                            ? "Enter your email to receive an OTP."
+                            : "Enter the OTP and your new password."}
                     </p>
                 </div>
 
                 {error && (
-                    <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg text-center animate-shake">
+                    <div className="w-full mb-6 p-2 bg-red-50 border border-red-200 text-red-600 text-xs font-semibold rounded text-center">
                         {error}
                     </div>
                 )}
 
                 {message && (
-                    <div className="mb-6 p-3 bg-green-50 border border-green-200 text-green-600 text-sm rounded-lg text-center">
+                    <div className="w-full mb-6 p-2 bg-green-50 border border-green-200 text-green-600 text-xs font-semibold rounded text-center">
                         {message}
                     </div>
                 )}
 
                 {step === 1 ? (
-                    <form onSubmit={handleSendOTP} className="space-y-5">
-                        <div className="relative">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 ml-1">Email Address</label>
-                            <div className="relative">
-                                <EnvelopeIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                                <input
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="yourname@gmail.com"
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
-                                />
-                            </div>
+                    <form onSubmit={handleSendOTP} className="w-full flex flex-col items-center gap-5">
+                        <div className="w-full bg-[#ebf2ff] rounded-sm transition-all focus-within:ring-1 focus-within:ring-[#0b63d1]/30">
+                            <input
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Email Address..."
+                                className="w-full py-2.5 bg-transparent text-gray-800 text-sm font-medium focus:outline-none placeholder:text-gray-400 text-center"
+                            />
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                            className="mt-4 w-full py-2.5 bg-[#0b63d1] hover:bg-[#084da8] text-white font-bold text-sm uppercase tracking-wide rounded-md shadow-lg transition-all active:scale-[0.98] disabled:bg-gray-300 disabled:cursor-not-allowed"
                         >
-                            {loading ? (
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                            ) : 'Send OTP'}
+                            {loading ? "Sending..." : "Send OTP"}
                         </button>
                     </form>
                 ) : (
-                    <form onSubmit={handleResetPassword} className="space-y-4">
-                        <div className="relative">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 ml-1">Enter OTP</label>
-                            <div className="relative">
-                                <ShieldCheckIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                                <input
-                                    type="text"
-                                    required
-                                    value={otp}
-                                    onChange={(e) => setOtp(e.target.value)}
-                                    placeholder="Enter 6-digit OTP"
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
-                                />
-                            </div>
+                    <form onSubmit={handleResetPassword} className="w-full flex flex-col items-center gap-4">
+                        <div className="w-full bg-[#ebf2ff] rounded-sm">
+                            <input
+                                type="text"
+                                required
+                                value={otp}
+                                onChange={(e) => setOtp(e.target.value)}
+                                placeholder="Enter 6-digit OTP"
+                                className="w-full py-2.5 bg-transparent text-gray-800 text-sm font-medium focus:outline-none placeholder:text-gray-400 text-center"
+                            />
                         </div>
 
-                        <div className="relative">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 ml-1">New Password</label>
-                            <div className="relative">
-                                <KeyIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                                <input
-                                    type="password"
-                                    required
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
-                                />
-                            </div>
+                        <div className="w-full relative bg-[#ebf2ff] rounded-sm flex items-center">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                required
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                placeholder="New Password"
+                                className="w-full py-2.5 bg-transparent text-gray-800 text-sm font-medium focus:outline-none placeholder:text-gray-400 text-center"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 text-gray-400 hover:text-[#0b63d1]"
+                            >
+                                {showPassword ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                            </button>
                         </div>
 
-                        <div className="relative">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 ml-1">Confirm Password</label>
-                            <div className="relative">
-                                <KeyIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                                <input
-                                    type="password"
-                                    required
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
-                                />
-                            </div>
+                        <div className="w-full relative bg-[#ebf2ff] rounded-sm flex items-center">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                required
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                placeholder="Confirm Password"
+                                className="w-full py-2.5 bg-transparent text-gray-800 text-sm font-medium focus:outline-none placeholder:text-gray-400 text-center"
+                            />
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3.5 mt-2 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-bold rounded-xl shadow-lg shadow-green-500/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                            className="mt-4 w-full py-2.5 bg-[#0b63d1] hover:bg-[#084da8] text-white font-bold text-sm uppercase tracking-wide rounded-md shadow-lg transition-all active:scale-[0.98] disabled:bg-gray-300 disabled:cursor-not-allowed"
                         >
-                            {loading ? (
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                            ) : 'Reset Password'}
+                            {loading ? "Resetting..." : "Reset Password"}
                         </button>
                     </form>
                 )}
             </div>
-
-            <style>
-                {`
-                @keyframes shake {
-                    0%, 100% { transform: translateX(0); }
-                    25% { transform: translateX(-5px); }
-                    75% { transform: translateX(5px); }
-                }
-                .animate-shake {
-                    animation: shake 0.2s ease-in-out 0s 2;
-                }
-                `}
-            </style>
         </div>
     );
 };
